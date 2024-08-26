@@ -1,0 +1,168 @@
+---
+server: shiny
+filters: [surveydown]
+---
+
+```{r}
+#| context: setup
+#| echo: false
+#| warning: false
+#| message: false
+
+# Run this in your R Console to install the latest version of the package:
+# remotes::install_github("surveydown-dev/surveydown", force = TRUE)
+
+# Run this to install or update the Quarto extension to the latest version:
+# surveydown::sd_update_extension()
+
+# Load the package
+library(surveydown)
+
+# Run initial setup function (essential - do not delete)
+sd_setup()
+```
+
+::: {#basic_skipping .sd-page}
+
+# Basic Skipping
+ 
+If the "**No**" option is chosen, you will be sent to the screenout page.
+
+This is done by using the `skip_if` argument in `sd_config()`.
+
+```{r}
+sd_question(
+  type  = 'mc',
+  id    = 'vehicle_ownership',
+  label = "Do you own your vehicle?",
+  option = c(
+    'Yes' = 'yes',
+    'No'  = 'no'
+  )
+)
+```
+
+<br>
+
+```{r}
+sd_next(next_page = 'custom_skipping')
+```
+
+:::
+
+::: {#custom_skipping .sd-page}
+
+# Custom Skipping
+ 
+Say that we want to have a more complicated condition for screening out respondents. Now there are 2 questions. If the user chooses "**No**" for both questions, they'll be sent to the screenout page. This is done by using the `skip_if_custom` argument in `sd_config()`. We also made a custom function called `screenout()` to facilitate the logic (see the server code chunk).
+
+```{r}
+sd_question(
+  type  = 'mc',
+  id    = 'vehicle_ownership2',
+  label = "Do you own your vehicle?",
+  option = c(
+    'Yes' = 'yes',
+    'No'  = 'no'
+  )
+)
+
+sd_question(
+  type  = 'mc',
+  id    = 'vehicle_buyer',
+  label = "Are you looking to buy a vehicle soon?",
+  option = c(
+    'Yes' = 'yes',
+    'No'  = 'no'
+  )
+)
+```
+
+<br>
+
+```{r}
+sd_next(next_page = 'end')
+```
+
+:::
+
+::: {#end .sd-page}
+
+## End page
+
+This is the normal end page for respondents who **do not** get screened out.
+
+:::
+
+::: {#screenout .sd-page}
+
+## Screenout page
+
+This is the **screenout page** for respondents who were sent to the screenout page.
+
+:::
+
+```{r}
+#| context: server
+
+##################
+# database setup #
+##################
+
+# surveydown stores data on a database that you define at https://supabase.com/
+# To connect to a database to store the survey data, update this with details
+# from your supabase account and database. For this demo, we set pause = TRUE
+# which will ignore the other settings and won't attempt to connect to
+# the database. See documentation for details at
+# https://surveydown.org/store-data
+
+db <- sd_database(
+  host   = "",
+  dbname = "",
+  port   = "",
+  user   = "",
+  table  = "",
+  pause  = TRUE
+)
+
+################
+# config setup #
+################
+
+# Use the sd_config() function to customize features in your survey, like
+# logic to conditionally display questions or skip to pages based on responses
+# to skip other questions in your survey. See documentation for details at
+# https://surveydown.org/config
+
+# Custom function for show_if_custom()
+
+screenout <- function(input) {
+  return(input$vehicle_ownership2 == "no" & input$vehicle_buyer == "no")
+}
+
+# Configs including show_if() and show_if_custom() logic
+
+config <- sd_config(
+  skip_if = tibble::tribble(
+    ~question_id,     ~question_value, ~target,
+    "vehicle_ownership", "no",         "screenout"
+  ),
+  skip_if_custom = list(
+    list(condition = screenout, target = "screenout")
+  )
+)
+
+####################################
+# Don't change anything below here #
+####################################
+
+# The sd_server function initiates your survey - don't change this
+
+sd_server(
+  input   = input,
+  output  = output,
+  session = session,
+  config  = config,
+  db      = db
+)
+```
