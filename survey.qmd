@@ -149,7 +149,8 @@ config <- sd_config(
   ),
   skip_if_custom = list(
     list(condition = screenout, target = "screenout")
-  )
+  ),
+  all_questions_required = TRUE
 )
 
 ####################################
