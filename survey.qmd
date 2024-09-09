@@ -53,7 +53,13 @@ db <- sd_database(
 
 ::: {#basic_skipping .sd-page}
 
-# Basic Skipping
+# Demo survey of the `skip_if` feature
+
+> This is a demo survey showcasing the functionality of <a href="https://surveydown.org" target="_blank">surveydown</a>. It doesn't collect any data.
+>
+> The GitHub repo of this demo can be accessed <a href="https://github.com/surveydown-dev/demo-skip-if" target="_blank">here</a>.
+
+## Basic Skipping
  
 If the "**No**" option is chosen, you will be sent to the screenout page.
 
@@ -81,7 +87,7 @@ sd_next(next_page = 'custom_skipping')
 
 ::: {#custom_skipping .sd-page}
 
-# Custom Skipping
+## Custom Skipping
  
 Say that we want to have a more complicated condition for screening out respondents. Now there are 2 questions. If the user chooses "**No**" for both questions, they'll be sent to the screenout page. This is done by using the `skip_if_custom` argument in `sd_config()`. We also made a custom function called `screenout()` to facilitate the logic (see the server code chunk).
 
