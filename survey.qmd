@@ -55,9 +55,11 @@ db <- sd_database(
 
 # Demo survey of the `skip_if` feature
 
-> This is a demo survey showcasing the functionality of <a href="https://surveydown.org" target="_blank">surveydown</a>. It doesn't collect any data.
->
-> The GitHub repo of this demo can be accessed <a href="https://github.com/surveydown-dev/demo-skip-if" target="_blank">here</a>.
+::: {.callout-note}
+This is a demo survey showcasing the functionality of <a href="https://surveydown.org" target="_blank">surveydown</a>. It doesn't collect any data.
+
+The GitHub repo of this demo can be accessed <a href="https://github.com/surveydown-dev/demo-skip-if" target="_blank">here</a>.
+:::
 
 ## Basic Skipping
  
@@ -75,11 +77,7 @@ sd_question(
     'No'  = 'no'
   )
 )
-```
 
-<br>
-
-```{r}
 sd_next(next_page = 'custom_skipping')
 ```
 
@@ -111,11 +109,7 @@ sd_question(
     'No'  = 'no'
   )
 )
-```
 
-<br>
-
-```{r}
 sd_next(next_page = 'end')
 ```
 
